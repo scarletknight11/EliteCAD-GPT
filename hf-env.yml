@@ -1,0 +1,17 @@
+name: hf-env
+channels:
+  - defaults
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - jupyterlab
+  - ipywidgets
+  - transformers
+  - tensorflow
+  - ipykernel
+  - notebook
+  - matplotlib
+  - scikit-learn
+  - pandas
+  - numpy
