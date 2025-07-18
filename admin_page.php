@@ -18,7 +18,7 @@ if (!isset($_SESSION['email'])) {
 </head>
 <header class="chat-header">
         <div class="header-content">
-            <h1><i class="fas fa-robot"></i> zElite CAD AI Assistant</h1>
+            <h1><i class="fas fa-robot"></i> Elite CAD AI Assistant</h1>
             <div class="user-info">
                 <span>Welcome, <?=htmlspecialchars($_SESSION['name'])?></span>
                 <a href="logout.php" class="logout-btn">
@@ -32,7 +32,7 @@ if (!isset($_SESSION['email'])) {
         <iframe src="http://your-streamlit-app-url" class="chatbot-iframe"></iframe>
     </main>
     <footer class="chat-footer">
-        <p>© <?=date('Y')?> Your Company Name. All rights reserved.</p>
+        <p>© <?=date('2025')?> Elite CAD Design. All rights reserved.</p>
     </footer>
 </body>
 
