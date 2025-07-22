@@ -1,10 +1,12 @@
 from langchain.adapters import openai
 from langchain.schema import HumanMessage
-import os
-from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI
+from langchain_experimental.agents.agent_toolkits import create_pandas_dataframe_agent
 import pandas as pd
 import streamlit as st
+import os
+import pdfplumber
+from dotenv import load_dotenv
 
 # Load environment variables
 load_dotenv()
@@ -12,14 +14,14 @@ openai_key = os.getenv("OPENAI_API_KEY")
 if not openai_key:
     raise ValueError("OPENAI_API_KEY is not set!")
 
-# Set up LLM
-llm_name = "gpt-3.5-turbo"
+# Set up LLM with GPT-4o
+llm_name = "gpt-4o"
 model = ChatOpenAI(api_key=openai_key, model=llm_name)
 
 # Load CSV
 df = pd.read_csv("PinConversation.csv").fillna(value=0)
 
-# Expanded domain keywords
+# Domain keywords
 ALLOWED_KEYWORDS = [
     "building", "construction", "cad", "design", "drafting", "maintenance", "hvac",
     "inspection", "roof", "electrical", "plumbing", "prototype", "mechanical",
@@ -30,33 +32,41 @@ ALLOWED_KEYWORDS = [
 ]
 
 def is_domain_question(question: str):
-    q_lower = question.lower()
-    return any(keyword in q_lower for keyword in ALLOWED_KEYWORDS)
+    return any(keyword in question.lower() for keyword in ALLOWED_KEYWORDS)
 
 def is_relevant_content(text: str):
-    text_lower = str(text).lower()
-    return any(keyword in text_lower for keyword in ALLOWED_KEYWORDS)
+    return any(keyword in str(text).lower() for keyword in ALLOWED_KEYWORDS)
 
-# Streamlit interface
-st.title("Elite CAD & Building Operations AI Chatbot")
+# Streamlit UI
+st.set_page_config(page_title="Elite CAD & Building Ops Chatbot", layout="wide")
+st.title("🏗️ Elite CAD & Building Operations AI Chatbot")
 
-st.write("### Dataset Preview")
+# Multiple PDF Upload
+uploaded_pdfs = st.file_uploader("Upload PDFs related to HVAC / MEP systems:", type="pdf", accept_multiple_files=True)
+pdf_text = ""
+
+if uploaded_pdfs:
+    for uploaded_pdf in uploaded_pdfs:
+        st.success(f"✅ Loaded PDF: {uploaded_pdf.name}")
+        with pdfplumber.open(uploaded_pdf) as pdf:
+            for page in pdf.pages:
+                extracted = page.extract_text()
+                if extracted:
+                    pdf_text += extracted + "\n"
+
+# Show CSV Preview
+st.write("### 📊 Dataset Preview")
 st.write(df.head(100))
 
-st.write("### Ask a question")
-question = st.text_input(
-    "Ask me something related to building operations, CAD design, or mechanical maintenance:",
-    "What are the most frequent mechanical problems?"
-)
+# Chat Input
+st.write("### 💬 Ask a Question")
+question = st.text_input("Ask something about building operations, CAD, or HVAC systems:", "What are common HVAC issues?")
 
 if st.button("Run Query"):
     if not is_domain_question(question):
-        st.error("❗ Sorry, I can only answer questions related to building operations, CAD design, or maintenance tasks.")
+        st.error("❗ Only questions about building operations, CAD, and maintenance are supported.")
     else:
-        # Filter relevant data
         filtered_df = df[df["content"].apply(is_relevant_content)]
-
-        from langchain_experimental.agents.agent_toolkits import create_pandas_dataframe_agent
 
         if not filtered_df.empty:
             agent = create_pandas_dataframe_agent(
@@ -71,7 +81,7 @@ if st.button("Run Query"):
             QUERY = (
                 "You are a helpful assistant focused on building operations and mechanical systems. "
                 "Answer the question below using the dataset if possible. "
-                "If the dataset does not contain relevant info, fall back to general knowledge.\n\n"
+                "If the dataset does not contain relevant info, fall back to PDF or general knowledge.\n\n"
                 f"Question: {question}"
             )
 
@@ -79,30 +89,48 @@ if st.button("Run Query"):
                 res = agent.invoke(QUERY)
                 agent_response = res["output"].strip()
 
-                # If agent response doesn't answer the question well, fall back to LLM
-                if not agent_response or "no information" in agent_response.lower() or "not found" in agent_response.lower():
-                    st.warning("⚠️ Dataset does not contain useful information. Using general knowledge...")
-                    response = model.invoke([HumanMessage(content=question)])
-                    st.write("### General Answer")
-                    st.markdown(response.content)
+                if not agent_response or "no information" in agent_response.lower():
+                    st.warning("⚠️ CSV had no relevant answers. Checking PDF...")
+                    pdf_snippets = [para for para in pdf_text.split("\n") if is_relevant_content(para)]
+                    if pdf_snippets:
+                        context = "\n".join(pdf_snippets[:50])
+                        prompt = f"Use this building operations reference to answer:\n\n{context}\n\nQuestion: {question}"
+                        response = model.invoke([HumanMessage(content=prompt)])
+                        st.write("### 📄 PDF Answer")
+                        st.markdown(response.content)
+                    else:
+                        response = model.invoke([HumanMessage(content=question)])
+                        st.write("### 🤖 General Answer")
+                        st.markdown(response.content)
                 else:
-                    st.write("### Final Answer")
+                    st.write("### ✅ Answer from CSV")
                     st.markdown(agent_response)
 
             except Exception as e:
-                st.warning("⚠️ Dataset agent failed. Falling back to general knowledge.")
+                st.warning("⚠️ Agent failed. Using LLM fallback...")
                 try:
                     response = model.invoke([HumanMessage(content=question)])
-                    st.write("### General Answer")
+                    st.write("### 🤖 General Answer")
                     st.markdown(response.content)
                 except Exception as e:
-                    st.error(f"LLM fallback also failed: {e}")
+                    st.error(f"LLM fallback failed: {e}")
 
         else:
-            st.info("ℹ️ No relevant data in the dataset. Using general knowledge...")
-            try:
-                response = model.invoke([HumanMessage(content=question)])
-                st.write("### General Answer")
-                st.markdown(response.content)
-            except Exception as e:
-                st.error(f"LLM response failed: {e}")
+            pdf_snippets = [para for para in pdf_text.split("\n") if is_relevant_content(para)]
+            if pdf_snippets:
+                st.info("ℹ️ Using PDF knowledge base.")
+                try:
+                    context = "\n".join(pdf_snippets[:50])
+                    prompt = f"Use this building operations reference to answer:\n\n{context}\n\nQuestion: {question}"
+                    response = model.invoke([HumanMessage(content=prompt)])
+                    st.write("### 📄 PDF Answer")
+                    st.markdown(response.content)
+                except Exception as e:
+                    st.error(f"PDF response failed: {e}")
+            else:
+                try:
+                    response = model.invoke([HumanMessage(content=question)])
+                    st.write("### 🤖 General Answer")
+                    st.markdown(response.content)
+                except Exception as e:
+                    st.error(f"LLM fallback failed: {e}")
