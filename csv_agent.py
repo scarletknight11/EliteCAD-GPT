@@ -68,18 +68,27 @@ if st.button("Run Query"):
                 max_iterations=20
             )
 
-            # Leaner prompt
             QUERY = (
                 "You are a helpful assistant focused on building operations and mechanical systems. "
-                "Answer the question below using the provided dataset only. "
-                "If no data is available, say so. Use Markdown formatting for clarity.\n\n"
+                "Answer the question below using the dataset if possible. "
+                "If the dataset does not contain relevant info, fall back to general knowledge.\n\n"
                 f"Question: {question}"
             )
 
             try:
                 res = agent.invoke(QUERY)
-                st.write("### Final Answer")
-                st.markdown(res["output"])
+                agent_response = res["output"].strip()
+
+                # If agent response doesn't answer the question well, fall back to LLM
+                if not agent_response or "no information" in agent_response.lower() or "not found" in agent_response.lower():
+                    st.warning("⚠️ Dataset does not contain useful information. Using general knowledge...")
+                    response = model.invoke([HumanMessage(content=question)])
+                    st.write("### General Answer")
+                    st.markdown(response.content)
+                else:
+                    st.write("### Final Answer")
+                    st.markdown(agent_response)
+
             except Exception as e:
                 st.warning("⚠️ Dataset agent failed. Falling back to general knowledge.")
                 try:
@@ -88,6 +97,7 @@ if st.button("Run Query"):
                     st.markdown(response.content)
                 except Exception as e:
                     st.error(f"LLM fallback also failed: {e}")
+
         else:
             st.info("ℹ️ No relevant data in the dataset. Using general knowledge...")
             try:
