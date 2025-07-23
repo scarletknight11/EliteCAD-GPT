@@ -34,5 +34,9 @@
   {
     "user": "What are the specific symptoms or issues with the HVAC system? ",
     "bot": "The reference material you provided does not explicitly list specific symptoms or issues related to HVAC systems. However, it does mention that HVAC systems account for nearly 40% of the energy used in commercial buildings, and their energy consumption and occupant comfort are strongly influenced by the condition of the building envelope. Additionally, to conserve energy, strategies such as optimal building orientation for different climate zones are suggested. To get specific symptoms or issues with HVAC systems, one would typically look for problems like poor temperature regulation, unusual noises, high energy bills, inadequate airflow, or frequent cycling of the system. However, these specific details are not included in the provided text."
+  },
+  {
+    "user": "What is the age of the HVAC units, and what is their general condition? ",
+    "bot": "The reference document provided does not include specific information about the age or general condition of HVAC units. It focuses on the design aspects of MEP (Mechanical, Electrical, and Plumbing) systems and offers guidance on building classification, efficiency factors, and energy conservation strategies for HVAC systems. To determine the age and condition of specific HVAC units, you would need to refer to maintenance records, inspection reports, or documentation specific to the building of interest."
   }
 ]
