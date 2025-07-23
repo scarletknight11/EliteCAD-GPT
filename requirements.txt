@@ -1,33 +1,8 @@
-# Core system
-numpy~=1.26.4
-pandas
 streamlit
+pandas
 python-dotenv
 pdfplumber
-
-# LangChain + OpenAI
-langchain>=0.1.14,<0.2.0
+langchain>=0.1.14
 langchain-core==0.1.32
 langchain-openai==0.1.7
-
-# LLM support
-transformers~=4.52.4
-huggingface-hub~=0.32.3
-tokenizers~=0.21.1
-safetensors~=0.5.3
-
-# Utilities
-tqdm
-requests
-beautifulsoup4
-certifi
-idna
-urllib3
-fsspec
-
-# Optional: Only add these if needed
-# keras
-# h5py
-# psutil
-# sympy
-# networkx
+openai
