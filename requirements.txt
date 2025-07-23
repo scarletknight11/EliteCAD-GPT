@@ -55,6 +55,7 @@ tf_keras~=2.19.0
 h5py~=3.13.0
 langchain-core>=0.1.32
 langchain-openai>=0.1.7
+langchain-experimental
 pdfplumber
 streamlit
 pandas
