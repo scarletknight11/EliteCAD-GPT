@@ -53,9 +53,10 @@ huggingface-hub~=0.32.3
 beautifulsoup4~=4.13.4
 tf_keras~=2.19.0
 h5py~=3.13.0
-langchain-core>=0.1.32
-langchain-openai>=0.1.7
-langchain-experimental
+langchain==0.1.17
+langchain-openai==0.1.6
+langchain-experimental==0.0.50
+openai==1.25.0
 pdfplumber
 streamlit
 pandas
