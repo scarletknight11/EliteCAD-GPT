@@ -1,4 +1,4 @@
-from langchain.schema import HumanMessage
+from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI
 from langchain_experimental.agents.agent_toolkits import create_pandas_dataframe_agent
 import pandas as pd
