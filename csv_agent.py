@@ -5,22 +5,20 @@ import pandas as pd
 import streamlit as st
 import os
 import pdfplumber
-#from dotenv import load_dotenv
 import json
 
-# Load environment variables
-#load_dotenv()
-openai_key = st.secrets.get("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
+# ✅ Load OpenAI API key from Streamlit secrets only
+openai_key = st.secrets.get("OPENAI_API_KEY")
 if not openai_key:
-    raise ValueError("❌ OpenAI API key not found in st.secrets or .env file!")
+    raise ValueError("❌ OpenAI API key not found in Streamlit secrets. Please add it to your app settings.")
 
-# Set up LLM with GPT-4o
+# ✅ Set up GPT-4o LLM
 model = ChatOpenAI(api_key=openai_key, model="gpt-4o")
 
-# Load CSV
+# ✅ Load CSV
 df = pd.read_csv("PinConversation.csv").fillna(value=0)
 
-# Domain keywords
+# ✅ Keywords for relevant questions and content filtering
 ALLOWED_KEYWORDS = [
     "building", "construction", "cad", "design", "drafting", "maintenance", "hvac",
     "inspection", "roof", "electrical", "plumbing", "prototype", "mechanical",
@@ -36,11 +34,11 @@ def is_domain_question(question: str):
 def is_relevant_content(text: str):
     return any(keyword in str(text).lower() for keyword in ALLOWED_KEYWORDS)
 
-# Streamlit UI setup
+# ✅ Streamlit UI
 st.set_page_config(page_title="Elite CAD & Building Ops Chatbot", layout="wide")
 st.title("🏗️ Elite CAD & Building Operations AI Chatbot")
 
-# Load chat history
+# ✅ Load chat history
 if "chat_history" not in st.session_state:
     if os.path.exists("chat_history.json"):
         with open("chat_history.json", "r") as f:
@@ -48,7 +46,7 @@ if "chat_history" not in st.session_state:
     else:
         st.session_state.chat_history = []
 
-# PDF Upload
+# ✅ PDF Upload
 uploaded_pdfs = st.file_uploader("Upload PDFs related to HVAC / MEP systems:", type="pdf", accept_multiple_files=True)
 pdf_text = ""
 if uploaded_pdfs:
@@ -60,13 +58,13 @@ if uploaded_pdfs:
                 if extracted:
                     pdf_text += extracted + "\n"
 else:
-    st.info("📄 You can upload PDFs related to HVAC or CAD systems for additional reference.")
+    st.info("📄 You can upload HVAC or CAD PDFs to improve the chatbot's responses.")
 
-# Show CSV Preview
+# ✅ CSV Preview
 st.write("### 📊 Dataset Preview")
 st.dataframe(df.head(100))
 
-# Chat Input
+# ✅ Chat Input
 user_input = st.chat_input("Ask something about building operations, CAD, or HVAC systems:")
 if user_input:
     question = user_input
@@ -115,7 +113,7 @@ if user_input:
         st.markdown(final_response)
         st.session_state.chat_history[-1]["bot"] = final_response
 
-# Display conversation history
+# ✅ Display conversation history
 if st.session_state.chat_history:
     st.write("### 💬 Conversation History")
     for chat in st.session_state.chat_history:
