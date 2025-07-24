@@ -58,5 +58,24 @@
   {
     "user": "When was the last maintenance check performed, and what was the outcome? ",
     "bot": "The document provided does not include specific information about maintenance checks or their outcomes for any facility or building. It seems to be an excerpt from a reference guide on the MEP design of building services. Details like maintenance schedules or outcomes would typically be found in operational records or maintenance logs, not in a design reference."
+  },
+  {
+    "user": "What is the condition of the pipes and fixtures, especially in older buildings? ",
+    "bot": "The provided reference does not directly address the condition of pipes and fixtures, especially in older buildings. To assess the condition of pipes and fixtures in older buildings, one would typically need to conduct a physical inspection or consult specific guidelines related to plumbing systems maintenance, durability, and material degradation over time. For more detailed information, a plumbing chapter or section in the document might be the right place to look, but the excerpt you've provided does not contain this information."
+  },
+  {
+    "user": "Are there any instances of low water pressure or recurring clogs? "
+  },
+  {
+    "user": "Are there any recurring issues like flickering lights, frequently tripped circuit breakers, or power surges? ",
+    "bot": "The reference provided does not discuss specific recurring issues such as flickering lights, frequently tripped circuit breakers, or power surges. It focuses on the classification of buildings, the efficiency factors for building design, the importance of HVAC systems, and the influence of building orientation in different climate zones. For information regarding electrical issues like flickering lights or power surges, one might look into Chapter 8: Electrical Systems, as it likely contains information on electrical operations and potential problems, although this chapter's content is not provided in the excerpt."
+  },
+  {
+    "user": "Are there any unusual noises or vibrations coming from mechanical equipment, such as pumps or motors? ",
+    "bot": "The dataset provided does not contain relevant information related to noises or vibrations from mechanical equipment such as pumps or motors. To diagnose such issues, one would typically need to conduct a physical inspection or use specialized equipment to monitor the performance and condition of these systems. Common indicators of mechanical problems include unusual noises, vibrations, or reduced efficiency in mechanical operations."
+  },
+  {
+    "user": "What is the preventative maintenance schedule for all mechanical systems? ",
+    "bot": "Preventative maintenance schedules for mechanical systems are typically determined based on the type and usage of the equipment. Generally, periodic inspections, lubrication, cleaning, adjustments, and replacements of parts are scheduled at regular intervals. For example:\n\n- HVAC systems might be checked monthly or seasonally to ensure efficient operation.\n- Elevators require monthly inspections for safety and performance.\n- Boilers and chillers might be serviced annually to ensure they function efficiently.\n- Pumps and motors could be inspected and serviced quarterly.\n\nThe exact schedule will vary based on manufacturer recommendations, building specifics, and usage patterns."
   }
 ]
