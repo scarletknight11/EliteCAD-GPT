@@ -5,11 +5,11 @@ import pandas as pd
 import streamlit as st
 import os
 import pdfplumber
-from dotenv import load_dotenv
+#from dotenv import load_dotenv
 import json
 
 # Load environment variables
-load_dotenv()
+#load_dotenv()
 openai_key = st.secrets.get("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
 if not openai_key:
     raise ValueError("❌ OpenAI API key not found in st.secrets or .env file!")
