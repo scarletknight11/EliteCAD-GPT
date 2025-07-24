@@ -88,5 +88,13 @@
   {
     "user": "Are there any inconsistencies in temperature across different areas of the building? ",
     "bot": "The provided document outline does not specifically address temperature inconsistencies across different areas of a building. It discusses building orientation and climate zones, which are crucial factors in determining building design for energy efficiency and occupant comfort. However, it does not provide detailed information on temperature variations within the building itself. For specifics on temperature inconsistencies, you would typically need a more detailed analysis, such as a thermal comfort assessment or an HVAC system performance evaluation, which are not covered in the sections presented."
+  },
+  {
+    "user": "Do any unusual noises or smells come from the HVAC system? ",
+    "bot": "The document provided does not directly address whether unusual noises or smells come from the HVAC system. Typically, unusual noises or smells from an HVAC system could signify maintenance issues or defects, but this document focuses mainly on design goals and strategies, rather than operational problems or troubleshooting. For concerns related to unusual noises or smells from an HVAC system, it would be advisable to consult a maintenance guide or speak with an HVAC professional."
+  },
+  {
+    "user": "What is the condition of the building's wiring, especially if it's an older property?",
+    "bot": "The dataset does not contain information about the condition of a building's wiring. However, generally speaking, the condition of a building's wiring, especially in older properties, can depend on various factors such as the age of the building, type of wiring used (e.g., knob-and-tube, aluminum, or modern copper wiring), and maintenance history. Older wiring systems like knob-and-tube may present safety risks and are often not grounded. Regular inspections by qualified electricians can help assess the condition and identify any necessary updates or repairs to meet current safety standards."
   }
 ]
