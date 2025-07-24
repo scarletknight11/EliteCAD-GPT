@@ -8,23 +8,19 @@ import pdfplumber
 from dotenv import load_dotenv
 import json
 
-# Load OpenAI key from Streamlit secrets or .env
-try:
-    openai_key = st.secrets["OPENAI_API_KEY"]
-except KeyError:
-    load_dotenv()
-    openai_key = os.getenv("OPENAI_API_KEY")
-
+# Load environment variables
+load_dotenv()
+openai_key = st.secrets.get("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
 if not openai_key:
     raise ValueError("❌ OpenAI API key not found in st.secrets or .env file!")
 
 # Set up LLM with GPT-4o
 model = ChatOpenAI(api_key=openai_key, model="gpt-4o")
 
-# Load CSV dataset
+# Load CSV
 df = pd.read_csv("PinConversation.csv").fillna(value=0)
 
-# Domain-specific keywords
+# Domain keywords
 ALLOWED_KEYWORDS = [
     "building", "construction", "cad", "design", "drafting", "maintenance", "hvac",
     "inspection", "roof", "electrical", "plumbing", "prototype", "mechanical",
@@ -52,7 +48,7 @@ if "chat_history" not in st.session_state:
     else:
         st.session_state.chat_history = []
 
-# Upload PDF section
+# PDF Upload
 uploaded_pdfs = st.file_uploader("Upload PDFs related to HVAC / MEP systems:", type="pdf", accept_multiple_files=True)
 pdf_text = ""
 if uploaded_pdfs:
@@ -66,11 +62,11 @@ if uploaded_pdfs:
 else:
     st.info("📄 You can upload PDFs related to HVAC or CAD systems for additional reference.")
 
-# Show CSV preview
+# Show CSV Preview
 st.write("### 📊 Dataset Preview")
 st.dataframe(df.head(100))
 
-# Chat input
+# Chat Input
 user_input = st.chat_input("Ask something about building operations, CAD, or HVAC systems:")
 if user_input:
     question = user_input
@@ -119,7 +115,7 @@ if user_input:
         st.markdown(final_response)
         st.session_state.chat_history[-1]["bot"] = final_response
 
-# Show full chat history
+# Display conversation history
 if st.session_state.chat_history:
     st.write("### 💬 Conversation History")
     for chat in st.session_state.chat_history:
