@@ -1,6 +1,6 @@
+python_version >= 3.10
 streamlit
 pandas
-python-dotenv
 pdfplumber
 langchain==0.1.14
 langchain-core==0.1.32
