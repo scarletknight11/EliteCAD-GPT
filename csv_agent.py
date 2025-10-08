@@ -14,6 +14,10 @@ import datetime
 # 0) Streamlit Setup
 # ──────────────────────────────────────────────────────────────────────────────
 st.set_page_config(page_title="Elite CAD & Building Ops Chatbot", layout="wide")
+
+# Company Logo (Replace with your actual file name)
+st.image("EliteLogo.jpg", width=180)  # e.g. "elite_logo.png"
+
 st.title("Elite CAD & Building Operations AI Chatbot")
 
 # Create a folder to store all chat logs
