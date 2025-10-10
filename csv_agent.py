@@ -1,40 +1,37 @@
 from __future__ import annotations
 from langchain_core.messages import HumanMessage
 from langchain_openai import ChatOpenAI
-
 import streamlit as st
 import pdfplumber
 import os
 import json
 import re
 import datetime
+import time
 
+# ✅ Only one Streamlit page config for entire app
+st.set_page_config(page_title="Elite CAD & Building Ops Chatbot", layout="wide")
 
 def app():
     # Redirect if user not logged in
     if "logged_in" not in st.session_state or not st.session_state.logged_in:
-        st.warning("You must log in first to access the chatbot.")
+        st.warning("⚠️ You must log in first to access the chatbot.")
         st.stop()
 
-    # ──────────────────────────────────────────────────────────────
-    # 0) Streamlit Setup
-    # ──────────────────────────────────────────────────────────────
-    st.set_page_config(page_title="Elite CAD & Building Ops Chatbot", layout="wide")
+    # Smooth fade transition
+    with st.spinner("Loading EliteCAD Chatbot..."):
+        time.sleep(1)
+
     st.image("EliteLogo.jpg", width=180)
     st.title("Elite CAD & Building Operations AI Chatbot")
     os.makedirs("chat_logs", exist_ok=True)
 
-    # ──────────────────────────────────────────────────────────────
-    # 1) API Key Setup
-    # ──────────────────────────────────────────────────────────────
+    # API key setup
     openai_key = os.getenv("OPENAI_API_KEY") or st.secrets.get("OPENAI_API_KEY")
     if not openai_key:
         st.error("Missing OPENAI_API_KEY.")
         st.stop()
 
-    # ──────────────────────────────────────────────────────────────
-    # 2) Model Initialization
-    # ──────────────────────────────────────────────────────────────
     try:
         model = ChatOpenAI(api_key=openai_key, model="gpt-4o")
     except Exception as e:
@@ -42,9 +39,7 @@ def app():
         st.exception(e)
         st.stop()
 
-    # ──────────────────────────────────────────────────────────────
-    # 3) Domain Keywords & Helpers
-    # ──────────────────────────────────────────────────────────────
+    # Domain keywords
     ALLOWED_KEYWORDS = [
         "building", "construction", "cad", "design", "drafting", "maintenance", "hvac",
         "inspection", "roof", "electrical", "plumbing", "prototype", "mechanical",
@@ -67,10 +62,8 @@ def app():
         msg = msg.strip().capitalize()
         return msg[:60] + "..." if len(msg) > 60 else msg
 
-    # ──────────────────────────────────────────────────────────────
-    # 4) PDF Upload
-    # ──────────────────────────────────────────────────────────────
-    uploaded_pdfs = st.file_uploader("Upload HVAC / CAD PDFs (optional):", type="pdf", accept_multiple_files=True)
+    # PDF Upload
+    uploaded_pdfs = st.file_uploader("📄 Upload HVAC / CAD PDFs (optional):", type="pdf", accept_multiple_files=True)
     pdf_text = ""
     if uploaded_pdfs:
         for up in uploaded_pdfs:
@@ -84,9 +77,7 @@ def app():
             except Exception as e:
                 st.warning(f"Couldn’t parse {up.name}: {e}")
 
-    # ──────────────────────────────────────────────────────────────
-    # 5) Session State Setup
-    # ──────────────────────────────────────────────────────────────
+    # Session state setup
     if "chat_history" not in st.session_state:
         st.session_state.chat_history = []
     if "chat_title" not in st.session_state:
@@ -96,9 +87,7 @@ def app():
     if "new_chat_started" not in st.session_state:
         st.session_state.new_chat_started = False
 
-    # ──────────────────────────────────────────────────────────────
-    # 6) Sidebar UI & Chat Selection
-    # ──────────────────────────────────────────────────────────────
+    # Sidebar: Chat Sessions
     st.sidebar.header("🗂️ Chat Sessions")
     log_files = sorted(os.listdir("chat_logs"), reverse=True)
     titles = ["➕ Start New Chat"] + [f.replace(".json", "") for f in log_files]
@@ -126,9 +115,7 @@ def app():
         st.sidebar.success("All chats deleted. Refresh to start fresh.")
         st.stop()
 
-    # ──────────────────────────────────────────────────────────────
-    # 7) Chat Input Logic
-    # ──────────────────────────────────────────────────────────────
+    # Chat Input
     user_input = st.chat_input("Ask about building ops, CAD, or HVAC:")
     if user_input:
         question = user_input.strip()
@@ -159,9 +146,7 @@ def app():
                 st.error("Model error:")
                 st.exception(e)
 
-    # ──────────────────────────────────────────────────────────────
-    # 8) Save Chat & Display Messages
-    # ──────────────────────────────────────────────────────────────
+    # Save and display chat
     if st.session_state.chat_history:
         try:
             title = st.session_state.chat_title or f"chat_{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}"
@@ -177,8 +162,10 @@ def app():
             if "bot" in chat:
                 st.markdown(f"**Bot:** {chat['bot']}")
 
-    # Logout button at bottom
+    # Logout
     if st.sidebar.button("🚪 Logout"):
         st.session_state.logged_in = False
         st.session_state.user = None
+        st.success("You have been logged out successfully.")
+        time.sleep(1)
         st.rerun()

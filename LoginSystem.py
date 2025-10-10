@@ -1,5 +1,9 @@
 import streamlit as st
 import pyrebase
+import time
+from csv_agent import app  # Import chatbot app
+
+# ✅ Removed st.set_page_config() to avoid duplication issue
 
 # Firebase config
 firebaseConfig = {
@@ -18,14 +22,18 @@ firebase = pyrebase.initialize_app(firebaseConfig)
 auth = firebase.auth()
 db = firebase.database()
 
-st.set_page_config(page_title="EliteCAD GPT", layout="wide")
-st.title("Welcome to EliteCAD GPT")
-
-# Session state to track login
+# Session state
 if "logged_in" not in st.session_state:
     st.session_state.logged_in = False
+if "user" not in st.session_state:
+    st.session_state.user = None
 
-if not st.session_state.logged_in:
+# ──────────────────────────────────────────────
+# LOGIN PAGE
+# ──────────────────────────────────────────────
+def login_page():
+    st.title("Welcome to EliteCAD GPT")
+
     choice = st.selectbox('Login / Signup', ['Login', 'Sign up'])
     email = st.text_input('Email')
     password = st.text_input('Password', type='password')
@@ -39,7 +47,7 @@ if not st.session_state.logged_in:
                 auth.sign_in_with_email_and_password(email, password)
                 db.child(user['localId']).child("Handle").set(handle)
                 db.child(user['localId']).child("ID").set(user['localId'])
-                st.info('Now go to Login to sign in.')
+                st.info('Now log in using your new account.')
             except Exception as e:
                 st.error(f"❌ {e}")
 
@@ -49,11 +57,18 @@ if not st.session_state.logged_in:
                 user = auth.sign_in_with_email_and_password(email, password)
                 st.session_state.logged_in = True
                 st.session_state.user = user
-                st.rerun()  # ✅ correct method
+                with st.spinner("Logging you in..."):
+                    time.sleep(1.5)
+                st.success("✅ Login successful! Redirecting to dashboard...")
+                time.sleep(1)
+                st.rerun()
             except Exception as e:
                 st.error(f"❌ {e}")
 
-# --- MAIN APP VIEW ---
+# ──────────────────────────────────────────────
+# ROUTING LOGIC
+# ──────────────────────────────────────────────
+if not st.session_state.logged_in:
+    login_page()
 else:
-    from csv_agent import app
-    app()
+    app()  # Run chatbot
