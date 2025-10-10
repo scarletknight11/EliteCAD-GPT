@@ -1,4 +1,4 @@
-streamlit
+streamlit==1.38.0
 pandas
 pdfplumber
 openai
@@ -7,3 +7,5 @@ langchain-core>=0.3,<0.4
 langchain-openai>=0.2,<0.3
 langchain-experimental>=0.0.50
 pyrebase4==4.7.1
+requests<2.30
+urllib3<2.0
