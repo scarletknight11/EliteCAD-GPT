@@ -23,7 +23,7 @@ def app():
         time.sleep(1)
 
     st.image("EliteLogo.jpg", width=180)
-    st.title("Elite CAD & Building Operations AI Chatbot")
+    st.title("Vast Active Building Intelligence System")
     os.makedirs("chat_logs", exist_ok=True)
 
     # API key setup
