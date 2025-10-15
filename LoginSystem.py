@@ -31,7 +31,7 @@ if "show_splash" not in st.session_state:
     st.session_state.show_splash = False
 
 # ──────────────────────────────────────────────
-# SPLASH SCREEN FUNCTION (MP4 autoplay animation)
+# SPLASH SCREEN FUNCTION (GIF autoplay)
 # ──────────────────────────────────────────────
 def splash_screen():
     st.markdown(
@@ -44,38 +44,37 @@ def splash_screen():
             align-items: center;
             height: 100vh;
             background-color: black;
+            animation: fadeIn 1s ease-in;
         }
-        video {
-            width: 70%;
-            max-width: 800px;
+        .splash-container img {
+            width: 60%;
+            max-width: 700px;
             border-radius: 12px;
-            outline: none;
             box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
+        }
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
         }
         </style>
         """,
         unsafe_allow_html=True,
     )
 
-    video_path = "Elite Animated Logo.mp4"  # Must exist in same folder
+    gif_path = "AnimatedLogo.gif"  # Ensure exact filename and same folder
     try:
-        # Embed HTML5 autoplay video directly
-        video_html = f"""
+        st.markdown(f"""
         <div class="splash-container">
-            <video autoplay muted playsinline>
-                <source src="{video_path}" type="video/mp4">
-                Your browser does not support the video tag.
-            </video>
+            <img src="{gif_path}" alt="Animated Logo">
         </div>
-        """
-        st.markdown(video_html, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
     except Exception as e:
-        st.error(f"❌ Error loading splash video: {e}")
+        st.error(f"❌ Error loading splash GIF: {e}")
         time.sleep(1)
         st.session_state.show_splash = False
         st.rerun()
 
-    # Play animation for 3 seconds (adjust if your video is longer)
+    # Let the GIF animation play for 3 seconds before redirect
     time.sleep(3)
     st.session_state.show_splash = False
     st.rerun()
